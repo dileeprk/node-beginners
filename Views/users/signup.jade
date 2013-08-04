@@ -1,0 +1,30 @@
+extends auth
+
+block auth
+  form.offset1.form-horizontal(action='/Logins', method='post')
+    p.offset2.error= message 
+    .control-group
+      label.control-label(for='name') Full name
+      .controls
+        input(type='text', name="name", placeholder='Full name' , value =login.name)
+
+    .control-group
+      label.control-label(for='email') Email
+      .controls
+        input(type='text', name="email", placeholder='Email',value =login.email))
+
+    .control-group
+      label.control-label(for='username') Username
+      .controls
+        input(type='text', name="username", placeholder='Username',value =login.username) )
+
+    .control-group
+      label.control-label(for='password') Password
+      .controls
+        input(type='password', name="password", placeholder='Password')
+     
+    .form-actions
+      button.btn.btn-primary(type='submit') Sign up
+      &nbsp;
+      | or&nbsp;
+      a.show-login(href="/login") login

@@ -1,0 +1,55 @@
+extends ../layouts/default
+
+
+block main
+  h1= title
+  hr
+
+block content
+  - var action = '/labs'
+  - action += lab.isNew? '' : '/' + lab.id
+  form.form-horizontal.confirm(method="post", action=action, enctype="multipart/form-data")
+    input(type='hidden', name='_csrf', value="#{csrf_token}")
+    
+    - if (!lab.isNew)
+      input(type="hidden", name="_method", value="PUT")
+  
+    .control-group
+      label.control-label(for='pat_name') Patient Name 
+      .controls
+        h4#pat_name #{lab.pat_name}
+
+    .control-group
+      label.control-label(for='doc_name') Doctor Name
+      .controls
+        h4#doc_name #{lab.doc_name}
+
+
+    .control-group
+      label.control-label(for='blood') Blood Group
+      .controls
+        h4#blood #{lab.blood}
+
+
+    .control-group
+      label.control-label(for='haemo') Haemoglobin
+      .controls
+        input.input-large#haemo(type='text', name="haemo", value=lab.haemo)
+        label gm/dL
+
+    .control-group
+      label.control-label(for='sugar') Sugar Level
+      .controls
+        input.input-large#sugar(type='text', name="sugar", value=lab.sugar)
+        label mmol/l
+
+
+    .control-group
+      label.control-label(for='bp') Blood Pressure
+      .controls
+        input.input-large#bp(type='text', name="bp", value=lab.bp)
+
+    .form-actions
+      button.btn.btn-primary(type='submit') Save changes
+      &nbsp;&nbsp;&nbsp;
+      a.btn(href="/labs", title="cancel") Cancel

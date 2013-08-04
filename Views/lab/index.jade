@@ -1,0 +1,15 @@
+extends ../layouts/default
+
+block main
+  h1= title
+
+block content
+  each lab in labs
+   .lab
+      h3
+       a(href='/labs/'+lab._id) #{lab.pat_name}
+
+  
+    
+ 
+   

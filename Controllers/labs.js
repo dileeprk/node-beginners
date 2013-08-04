@@ -1,0 +1,149 @@
+//console.log for BETTER UNDERSTANDING WHILE EXECUTING ON LOCAL MACHINE!
+var mongoose = require('mongoose')
+  , Lab = mongoose.model('Lab')
+  , utils = require('../lib/utils')
+  , _ = require('underscore')
+
+
+
+exports.load = function(req, res, next, id){
+  var Login = mongoose.model('Login')
+
+  Lab.load(id, function (err, lab) {
+    
+    if (err) return next(err)
+    if (!lab) return next(new Error('not found'))
+    req.lab = lab
+    console.log('In labs.load'+req.lab)
+    next()
+  })
+}
+
+
+exports.index = function(req, res){
+  var page = (req.param('page') > 0 ? req.param('page') : 1) - 1
+  var perPage = 30
+  var options = {
+    perPage: perPage,
+    page: page
+  }
+
+  Lab.list(options, function(err, labs) {
+    if (err) return res.render('500')
+    Lab.count().exec(function (err, count) {
+      res.render('../Views/lab/index.jade', {
+        title: 'Lab Entries of Patients:',
+        labs: labs,
+	lab: req.lab,
+        page: page + 1,
+        pages: Math.ceil(count / perPage)
+      })
+    })
+  })
+}
+
+
+
+exports.new = function(req, res){
+  res.render('../Views/lab/new.jade', {
+    title: 'New Lab Entry',
+    lab: new Lab({})
+  })
+}
+
+
+
+exports.create = function (req, res) {
+  var lab = new Lab(req.body)
+  lab.user = req.user
+
+  lab.save(function (err) {
+    if (!err) {
+      req.flash('success', 'Successfully created lab entry')
+      console.log("Successfully created lab entry"+req.body.pat_name)
+     return res.redirect('/labs/'+lab._id)
+    }
+
+    res.render('../Views/lab/new.jade', {
+      title: 'New Lab Entry',
+      lab: lab,
+      errors: utils.errors(err.errors || err)
+    })
+  })
+}
+
+//Search
+exports.searchpat = function(req, res){
+  
+  var patient=req.body.pat_search;
+
+  console.log("Searching patient "+patient)
+  Lab.searchpat(patient, function (err, lab) {
+    
+ 
+    if (!lab) {
+	console.log("No such patient")
+	req.flash('errors', 'No entry was found for this patient')
+	
+	return res.redirect('/labs')
+    }
+	if(!err){
+	req.lab = lab
+    console.log('In labs.searchpat found '+req.lab)
+    return res.redirect('/labs/'+lab._id)
+   
+	}
+  })
+}
+
+
+exports.edit = function (req, res) {
+  res.render('../Views/lab/edit.jade', {
+    title: 'Edit details of ' + req.lab.pat_name,
+    lab: req.lab
+  })
+}
+
+
+
+exports.update = function(req, res){
+  var lab = req.lab
+  
+  lab = _.extend(lab, req.body)
+  console.log('updating'+lab.pat_name+" "+lab.doc_name)
+  lab.save(function(err) {
+    if (!err) {
+      console.log('updating'+lab)
+	req.flash('success', 'Changes have been saved')
+      return res.redirect('/labs/' + lab._id)
+    }
+
+    res.render('../Views/lab/edit.jade', {
+      title: "Editing failed",
+      lab: lab,
+      errors: utils.errors(err.errors || err)
+    })
+  })
+}
+
+
+
+exports.show = function(req, res){
+  res.render('../Views/lab/show.jade', {
+    title: req.lab.pat_name,
+    lab: req.lab
+  })
+ }
+
+
+
+
+
+
+exports.destroy = function(req, res){
+  var lab = req.lab
+  lab.remove(function(err){
+    req.flash('info', 'Deleted successfully')
+    res.redirect('/labs')
+  })
+}

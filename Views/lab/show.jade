@@ -1,0 +1,31 @@
+extends ../layouts/default
+
+block main
+  - var pat_name = lab.pat_name 
+  - var doc_name = lab.doc_name
+  - var blood = lab.blood
+  - var haemo = lab.haemo
+  - var sugar = lab.sugar
+  - var bp = lab.bp
+  h1 Patient :&nbsp &nbsp &nbsp #{pat_name}
+  hr
+block content
+  form.form-horizontal.confirmdel(action="/labs/"+lab.id, method="post",enctype="multipart/form-data")
+    h3 &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Doctor :&nbsp &nbsp &nbsp #{doc_name}
+    br
+    h3 &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Blood Group :&nbsp &nbsp &nbsp #{blood}
+    br
+    h3 &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Haemoglobin :&nbsp &nbsp &nbsp #{haemo}&nbsp &nbsp &nbsp mg/dL
+    br
+    h3 &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Sugar Level :&nbsp &nbsp &nbsp #{sugar} &nbsp &nbsp &nbsp mmol/l
+    br
+    h3 &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Blood pressure :&nbsp &nbsp &nbsp #{bp}
+    br
+    
+    
+    input(type='hidden', name='_csrf', value="#{csrf_token}")
+    .form-actions
+      a.btn.btn-primary(href='/labs/'+lab._id+'/edit', title="edit") Edit
+      &nbsp;&nbsp;&nbsp;
+      input(type="hidden", name="_method", value="DELETE")
+      button.btn.btn-danger(type="submit") Delete
