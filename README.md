@@ -6,4 +6,5 @@ A simple nodejs-express-mongoose-jade web application which also implements CRUD
 To execute:
 
 $npm install
+
 $nodemon server.js
